@@ -19,10 +19,7 @@ function lia.module.load(uniqueID, path, isSingleFile, variable)
     }
 
     if uniqueID == "schema" then
-        if SCHEMA then
-            MODULE = SCHEMA
-        end
-
+        if SCHEMA then MODULE = SCHEMA end
         variable = "SCHEMA"
         MODULE.folder = engine.ActiveGamemode()
     elseif lia.module.list[uniqueID] then
@@ -33,16 +30,10 @@ function lia.module.load(uniqueID, path, isSingleFile, variable)
     MODULE.loading = true
     MODULE.path = path
     lia.util.include(isSingleFile and path or path .. "/sh_" .. variable:lower() .. ".lua", "shared")
-    if not isSingleFile then
-        lia.module.loadExtras(path)
-    end
-
+    if not isSingleFile then lia.module.loadExtras(path) end
     MODULE.loading = false
     local uniqueID2 = uniqueID
-    if uniqueID2 == "schema" then
-        uniqueID2 = MODULE.name
-    end
-
+    if uniqueID2 == "schema" then uniqueID2 = MODULE.name end
     function MODULE:setData(value, global, ignoreMap)
         lia.data.set(uniqueID2, value, global, ignoreMap)
     end
@@ -52,9 +43,7 @@ function lia.module.load(uniqueID, path, isSingleFile, variable)
     end
 
     for k, v in pairs(MODULE) do
-        if type(v) == "function" then
-            hook.Add(k, MODULE, v)
-        end
+        if type(v) == "function" then hook.Add(k, MODULE, v) end
     end
 
     if uniqueID == "schema" then
@@ -67,9 +56,7 @@ function lia.module.load(uniqueID, path, isSingleFile, variable)
     end
 
     hook.Run("ModuleLoaded", uniqueID, MODULE)
-    if MODULE.OnLoaded then
-        MODULE:OnLoaded()
-    end
+    if MODULE.OnLoaded then MODULE:OnLoaded() end
 end
 
 --------------------------------------------------------------------------------------------------------------------------
@@ -105,17 +92,12 @@ function lia.module.loadEntities(path)
     local function IncludeFiles(path2, clientOnly)
         if (SERVER and file.Exists(path2 .. "init.lua", "LUA")) or (CLIENT and file.Exists(path2 .. "cl_init.lua", "LUA")) then
             lia.util.include(path2 .. "init.lua", clientOnly and "client" or "server")
-            if file.Exists(path2 .. "cl_init.lua", "LUA") then
-                lia.util.include(path2 .. "cl_init.lua", "client")
-            end
-
+            if file.Exists(path2 .. "cl_init.lua", "LUA") then lia.util.include(path2 .. "cl_init.lua", "client") end
             return true
         elseif file.Exists(path2 .. "shared.lua", "LUA") then
             lia.util.include(path2 .. "shared.lua", "shared")
-
             return true
         end
-
         return false
     end
 
@@ -128,9 +110,7 @@ function lia.module.loadEntities(path)
             _G[variable].ClassName = v
             if IncludeFiles(path2, clientOnly) and not client then
                 if clientOnly then
-                    if CLIENT then
-                        register(_G[variable], v)
-                    end
+                    if CLIENT then register(_G[variable], v) end
                 else
                     register(_G[variable], v)
                 end
@@ -145,9 +125,7 @@ function lia.module.loadEntities(path)
             _G[variable].ClassName = niceName
             lia.util.include(path .. "/" .. folder .. "/" .. v, clientOnly and "client" or "shared")
             if clientOnly then
-                if CLIENT then
-                    register(_G[variable], niceName)
-                end
+                if CLIENT then register(_G[variable], niceName) end
             else
                 register(_G[variable], niceName)
             end
@@ -219,7 +197,6 @@ function lia.module.isDisabled(uniqueID)
     if uniqueID == "simfphys" then return not simfphys end
     if uniqueID == "pac" then return not pac end
     if lia.config.UnLoadedModules[uniqueID] ~= nil then return lia.config.UnLoadedModules[uniqueID] end
-
     return lia.data.get("unloaded", {}, false, true)[uniqueID] == true
 end
 
